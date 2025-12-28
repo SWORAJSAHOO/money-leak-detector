@@ -28,6 +28,7 @@ TEMPLATES = [{
   'django.contrib.messages.context_processors.messages',
  ]},
 }]
+WSGI_APPLICATION = 'money_leak.wsgi.application'
 DATABASES = {'default': {'ENGINE':'django.db.backends.sqlite3','NAME':BASE_DIR/'db.sqlite3'}}
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
