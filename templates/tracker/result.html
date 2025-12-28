@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Money Insight</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --text: #222;
+            --danger: #e53935;
+            --good: #43a047;
+        }
+
+        body.dark {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f1f1f1;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial;
+            background: var(--bg);
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        .card {
+            max-width: 450px;
+            margin: 40px auto;
+            background: var(--card);
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            animation: fadeUp 0.6s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .warn {
+            background: #ffeaea;
+            border-left: 5px solid var(--danger);
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .good {
+            background: #e8f5e9;
+            border-left: 5px solid var(--good);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 500px) {
+            .card { margin: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="card">
+    <h2>Money Insight</h2>
+
+    <div class="row"><span>Income</span><span>₹{{ income }}</span></div>
+    <div class="row"><span>Spent</span><span>₹{{ total_spent }}</span></div>
+    <div class="row"><span>Remaining</span><span>₹{{ remaining }}</span></div>
+
+    <div class="warn">
+        Biggest Leak: {{ biggest.category }} – ₹{{ biggest.amount }}
+    </div>
+
+    <div class="good">
+        You could save ₹{{ save }} next month
+    </div>
+
+    <canvas id="chart" style="margin-top:20px;"></canvas>
+
+    <h3>Top 3 Expenses</h3>
+    <ul>
+        {% for e in top_expenses %}
+        <li>{{ e.category }} – ₹{{ e.amount }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'home' %}">🔄 New Analysis</a>
+    <button onclick="toggleMode()">🌙 Toggle Dark Mode</button>
+</div>
+
+<script>
+    function toggleMode() {
+        document.body.classList.toggle("dark");
+    }
+
+    new Chart(document.getElementById("chart"), {
+        type: "pie",
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{ data: {{ values|safe }} }]
+        }
+    });
+</script>
+</body>
+</html>

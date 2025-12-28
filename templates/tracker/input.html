@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Money Leak Detector</title>
+
+    <style>
+        :root {
+            --bg: #eef2f3;
+            --card: #ffffff;
+            --text: #222;
+            --accent: #4CAF50;
+        }
+
+        body.dark {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #f1f1f1;
+            --accent: #81c784;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            max-width: 420px;
+            margin: 60px auto;
+            background: var(--card);
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            animation: fadeUp 0.6s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { text-align: center; margin-bottom: 5px; }
+
+        p { text-align: center; font-size: 14px; opacity: 0.7; }
+
+        label { font-weight: 600; margin-top: 12px; display: block; }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .analyze {
+            flex: 2;
+            background: var(--accent);
+            color: white;
+        }
+
+        .clear {
+            flex: 1;
+            background: #999;
+            color: white;
+        }
+
+        .toggle {
+            width: 100%;
+            margin-top: 12px;
+            background: transparent;
+            color: var(--text);
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                margin: 30px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="card">
+    <h2>Money Leak Detector</h2>
+    <p>Find where your money disappears</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Monthly Income</label>
+        <input type="text" id="income_display" placeholder="₹30,000" oninput="formatCurrency(this)">
+        <input type="hidden" name="income" id="income_real">
+
+        <label>Food</label>
+        <input type="text" class="amount_display" placeholder="₹5,500" oninput="formatCurrency(this)">
+        <input type="hidden" name="amount" class="amount_real">
+
+
+
+        <label>Shopping</label>
+        <input type="text" class="amount_display" placeholder="₹9,500" oninput="formatCurrency(this)">
+        <input type="hidden" name="amount" class="amount_real">
+
+
+
+        <label>Travel</label>
+        <input type="text" class="amount_display" placeholder="₹10,000" oninput="formatCurrency(this)">
+        <input type="hidden" name="amount" class="amount_real">
+
+
+
+        <div class="btn-group">
+            <button class="analyze">Analyze</button>
+            <button type="reset" class="clear">Clear</button>
+        </div>
+    </form>
+
+    <button class="toggle" onclick="toggleMode()">🌙 Toggle Dark Mode</button>
+</div>
+
+<script>
+function formatCurrency(input) {
+    // Remove non-digits
+    let value = input.value.replace(/[^0-9]/g, "");
+
+    if (value === "") {
+        input.nextElementSibling.value = "";
+        return;
+    }
+
+    // Save real numeric value
+    input.nextElementSibling.value = value;
+
+    // Format for display
+    input.value = "₹" + Number(value).toLocaleString("en-IN");
+}
+
+  // Apply saved mode on page load
+    if (localStorage.getItem("darkMode") === "on") {
+        document.body.classList.add("dark");
+    }
+
+    function toggleMode() {
+        document.body.classList.toggle("dark");
+
+        // Save preference
+        if (document.body.classList.contains("dark")) {
+            localStorage.setItem("darkMode", "on");
+        } else {
+            localStorage.setItem("darkMode", "off");
+        }
+    }
+</script>
+
+</body>
+</html>
